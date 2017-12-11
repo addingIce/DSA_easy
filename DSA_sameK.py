@@ -1,0 +1,37 @@
+#coding = utf-8
+from gmpy2 import *
+import hashlib
+
+p = mpz(0x800000000000000089e1855218a0e7dac38136ffafa72eda7859f2171e25e65eac698c1702578b07dc2a1076da241c76c62d374d8389ea5aeffd3226a0530cc565f3bf6b50929139ebeac04f48c3c84afb796d61e5a4f9a8fda812ab59494232c7d2b4deb50aa18ee9e132bfa85ac4374d7f9091abc3d015efc871a584471bb1)
+q = mpz(0xf4f47f05794b256174bba6e9b396a7707e563c5b)
+g = mpz(0x5958c9d3898b224b12672c0b98e06c60df923cb8bc999d119458fef538b8fa4046c8db53039db620c094c9fa077ef389b5322a559946a71903f990f1f7e0e025e2d7f7cf494aff1a0470f5b64c36b625a097f1651fe775323556fe00b3608c887892878480e99041be601a62166ca6894bdd41a7054ec89f756ba9fc95302291)
+
+msg1 = '''Listen for me, you better listen for me now. '''
+s1 = 1267396447369736888040262262183731677867615804316
+r1 = 1105520928110492191417703162650245113664610474875
+m1 = 0xa4db3de27e2db3e5ef085ced2bced91b82e0df19
+
+msg2 = '''Pure black people mon is all I mon know. '''
+s2 = 1021643638653719618255840562522049391608552714967
+r2 = 1105520928110492191417703162650245113664610474875
+m2 = 0xd22804c4899b522b23eda34d2137cd8cc22b9ce8
+
+k = (m1-m2)*invert((s1-s2),q) %q
+print 'k :',k
+
+Hash = hashlib.sha1()
+Hash.update(msg1)
+h = Hash.hexdigest()
+h = mpz('0x'+h)
+
+
+x = mpz(0)
+x = (((s1*k)-h)*invert(r1,q))%q
+print 'x :',x
+Hash = hashlib.sha1()
+Hash.update(x.digits(16))
+result = Hash.hexdigest()
+print 'SHA-1 :',result
+
+y = pow(g,x,p)
+print 'y: ',y.digits(16)
